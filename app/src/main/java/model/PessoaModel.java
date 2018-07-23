@@ -80,4 +80,9 @@ public class PessoaModel {
     public byte getRegistroAtivo() {
         return registroAtivo;
     }
+
+    public String toString()
+    {
+        return this.getNome();
+    }
 }

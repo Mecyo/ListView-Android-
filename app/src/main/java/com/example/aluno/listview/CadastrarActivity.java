@@ -44,15 +44,15 @@ public class CadastrarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastrar);
-// CHAMA O METODO PARA DIZER QUAL A LOCALIZAÇÃO,
-// USADO PARA TRADUZIR OS TEXTOS DO CALENDÁRIO.
+        // CHAMA O METODO PARA DIZER QUAL A LOCALIZAÇÃO,
+        // USADO PARA TRADUZIR OS TEXTOS DO CALENDÁRIO.
         this.Localizacao();
-//VINCULA OS COMPONENTES DA TELA COM OS DA ATIVIDADE
+        //VINCULA OS COMPONENTES DA TELA COM OS DA ATIVIDADE
 
         this.CriarComponentes();
-//CRIA OS EVENTOS DOS COMPONENTES
+        //CRIA OS EVENTOS DOS COMPONENTES
         this.CriarEventos();
-//CARREGA AS OPÇÕES DE ESTADO CIVIL
+        //CARREGA AS OPÇÕES DE ESTADO CIVIL
         this.CarregaEstadosCivis();
     }
     //VINCULA OS COMPONENTES DA TELA COM OS DA ATIVIDADE
@@ -69,7 +69,7 @@ public class CadastrarActivity extends AppCompatActivity {
         spinnerEstadoCivil = (Spinner)this.findViewById(R.id.spinnerEstadoCivil);
         checkBoxRegistroAtivo =
                 (CheckBox)this.findViewById(R.id.checkBoxRegistroAtivo);
-        buttonSalvar = (Button) this.findViewById(R.id.buttonSalvar);
+        buttonSalvar = (Button) this.findViewById(R.id.btnSalvar);
         buttonVoltar = (Button) this.findViewById(R.id.buttonVoltar);
     }
     //CRIA OS EVENTOS DOS COMPONENTES
@@ -78,28 +78,28 @@ public class CadastrarActivity extends AppCompatActivity {
         int anoAtual = calendarDataAtual.get(Calendar.YEAR);
         int mesAtual = calendarDataAtual.get(Calendar.MONTH);
         int diaAtual = calendarDataAtual.get(Calendar.DAY_OF_MONTH);
-//MONTANDO O OBJETO DE DATA PARA PREENCHER O CAMPOS QUANDO FOR SELECIONADO
-//FORMATO DD/MM/YYYY
+        //MONTANDO O OBJETO DE DATA PARA PREENCHER O CAMPOS QUANDO FOR SELECIONADO
+        //FORMATO DD/MM/YYYY
         datePickerDialogDataNascimento = new DatePickerDialog(this,new
                 DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int anoSelecionado, int
                             mesSelecionado, int diaSelecionado) {
-//FORMATANDO O MÊS COM DOIS DÍGITOS
+                        //FORMATANDO O MÊS COM DOIS DÍGITOS
                         String mes = (String.valueOf((mesSelecionado + 1)).length() == 1 ?
                                 "0" + (mesSelecionado + 1 ): String.valueOf(mesSelecionado));
                         editTextDataNascimento.setText(diaSelecionado + "/" + mes + "/" +
                                 anoSelecionado);
                     }
                 }, anoAtual, mesAtual, diaAtual);
-//CRIANDO EVENTO NO CAMPO DE DATA PARA ABRIR A POPUP
+        //CRIANDO EVENTO NO CAMPO DE DATA PARA ABRIR A POPUP
         editTextDataNascimento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 datePickerDialogDataNascimento.show();
             }
         });
-//CRIANDO EVENTO NO CAMPO DE DATA PARA ABRIR A POPUP
+        //CRIANDO EVENTO NO CAMPO DE DATA PARA ABRIR A POPUP
         editTextDataNascimento.setOnFocusChangeListener(new
                                                                 View.OnFocusChangeListener() {
 
@@ -108,14 +108,14 @@ public class CadastrarActivity extends AppCompatActivity {
                                                                         datePickerDialogDataNascimento.show();
                                                                     }
                                                                 });
-//CRIANDO EVENTO NO BOTÃO SALVAR
+        //CRIANDO EVENTO NO BOTÃO SALVAR
         buttonSalvar.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 Salvar_onClick();
             }
         });
-//CRIANDO EVENTO NO BOTÃO VOLTAR
+        //CRIANDO EVENTO NO BOTÃO VOLTAR
         buttonVoltar.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -145,33 +145,33 @@ public class CadastrarActivity extends AppCompatActivity {
             editTextDataNascimento.requestFocus();
         }
         else{
-/*CRIANDO UM OBJETO PESSOA*/
+            /*CRIANDO UM OBJETO PESSOA*/
             PessoaModel pessoaModel = new PessoaModel();
-/*SETANDO O VALOR DO CAMPO NOME*/
+            /*SETANDO O VALOR DO CAMPO NOME*/
             pessoaModel.setNome(editTextNome.getText().toString().trim());
-/*SETANDO O ENDEREÇO*/
+            /*SETANDO O ENDEREÇO*/
             pessoaModel.setEndereco(editTextEndereco.getText().toString().trim());
-/*SETANDO O SEXO*/
+            /*SETANDO O SEXO*/
             if(radioButtonMasculino.isChecked())
                 pessoaModel.setSexo("M");
             else
                 pessoaModel.setSexo("F");
-/*SETANDO A DATA DE NASCIMENTO*/
+            /*SETANDO A DATA DE NASCIMENTO*/
             pessoaModel.setDataNascimento(editTextDataNascimento.getText().toString().trim());
-/*REALIZANDO UM CAST PARA PEGAR O OBJETO DO ESTADO CIVIL SELECIONADO*/
+            /*REALIZANDO UM CAST PARA PEGAR O OBJETO DO ESTADO CIVIL SELECIONADO*/
             EstadoCivilModel estadoCivilModel =
                     (EstadoCivilModel)spinnerEstadoCivil.getSelectedItem();
 
-/*SETANDO ESTO CIVIL*/
+            /*SETANDO ESTADO CIVIL*/
             pessoaModel.setEstadoCivil(estadoCivilModel.getCodigo());
-/*SETA O REGISTRO COMO INATIVO*/
+            /*SETA O REGISTRO COMO INATIVO*/
             pessoaModel.setRegistroAtivo((byte)0);
-/*SE TIVER SELECIONADO SETA COMO ATIVO*/
+            /*SE TIVER SELECIONADO SETA COMO ATIVO*/
             if(checkBoxRegistroAtivo.isChecked())
                 pessoaModel.setRegistroAtivo((byte)1);
-/*SALVANDO UM NOVO REGISTRO*/
+            /*SALVANDO UM NOVO REGISTRO*/
             new PessoaRepository(this).Salvar(pessoaModel);
-/*MENSAGEM DE SUCESSO!*/
+            /*MENSAGEM DE SUCESSO!*/
             Uteis.Alert(this,this.getString(R.string.registro_salvo_sucesso));
             LimparCampos();
         }

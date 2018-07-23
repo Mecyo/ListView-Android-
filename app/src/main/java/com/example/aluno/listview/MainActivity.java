@@ -1,6 +1,8 @@
 package com.example.aluno.listview;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this.criarComponentes();
         this.carregaOpcoesLista();
+        //Criando banco de dados
+        @SuppressLint("WrongConstant") SQLiteDatabase db = openOrCreateDatabase("SISTEMA.db", SQLiteDatabase.CREATE_IF_NECESSARY, null);
     }
 
     private void criarComponentes(){
@@ -37,12 +41,19 @@ public class MainActivity extends AppCompatActivity {
         listViewOpcoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int posicaoDaLinha, long id) {
-                if(posicaoDaLinha == 0) {
-                    Intent createPessoaActivity = new Intent(MainActivity.this, CadastrarActivity.class);
-                    startActivity(createPessoaActivity);
+                try {
+                    if (posicaoDaLinha == 0) {
+                        Intent createPessoaActivity = new Intent(MainActivity.this, CadastrarActivity.class);
+                        startActivity(createPessoaActivity);
+                    } else if (posicaoDaLinha == 1) {
+                        Intent listarPessoasActivity = new Intent(MainActivity.this, ListarPessoasActivity.class);
+                        startActivity(listarPessoasActivity);
+                    } else
+                        Toast.makeText(getApplicationContext(), "Opção inválida!", Toast.LENGTH_SHORT).show();
                 }
-                else
-                    Toast.makeText(getApplicationContext(), "Opção inválida!", Toast.LENGTH_SHORT).show();
+                catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

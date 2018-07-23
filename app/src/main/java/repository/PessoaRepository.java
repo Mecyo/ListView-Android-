@@ -3,6 +3,14 @@ package repository;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.ListAdapter;
+import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
+
+import com.example.aluno.listview.CadastrarActivity;
+import com.example.aluno.listview.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +20,23 @@ import model.PessoaModel;
 
 public class PessoaRepository {
     DatabaseUtil databaseUtil;
+    Context context;
 
     public PessoaRepository(Context context){
         databaseUtil = new DatabaseUtil(context);
+        this.context = context;
     }
 
     public void Salvar(PessoaModel pessoaModel){
-        ContentValues contentValues = getPessoaContent(pessoaModel);
-        databaseUtil.getConexaoDataBase().insert("tb_pessoa",null,contentValues);
+        try {
+            ContentValues contentValues = getPessoaContent(pessoaModel);
+            databaseUtil.getConexaoDataBase().insert("tb_pessoa",null,contentValues);
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
     }
 
     public void Atualizar(PessoaModel pessoaModel){
@@ -60,7 +77,7 @@ public class PessoaRepository {
         return pessoaModel;
     }
 
-    public List<PessoaModel> selecionarPessoas(){
+    public List<PessoaModel> selecionarPessoas(String txtBusca){
         List<PessoaModel> pessoas = new ArrayList<PessoaModel>();
 
         StringBuilder stringBuilderQuery = new StringBuilder();
@@ -70,9 +87,13 @@ public class PessoaRepository {
         stringBuilderQuery.append("fl_sexo, ");
         stringBuilderQuery.append("dt_nascimento, ");
         stringBuilderQuery.append("fl_estadoCivil, ");
-        stringBuilderQuery.append("fl_ativo, ");
-        stringBuilderQuery.append("FROM tb_pessoa, ");
-        stringBuilderQuery.append("ORDER BY ds_nome, ");
+        stringBuilderQuery.append("fl_ativo ");
+        stringBuilderQuery.append("FROM tb_pessoa ");
+        if(txtBusca != "")
+        {
+            stringBuilderQuery.append("WHERE ds_nome LIKE " + txtBusca);
+        }
+        stringBuilderQuery.append(" ORDER BY ds_nome;");
 
         Cursor cursor = databaseUtil.getConexaoDataBase().rawQuery(stringBuilderQuery.toString(), null);
         cursor.moveToFirst();
@@ -92,5 +113,24 @@ public class PessoaRepository {
             cursor.moveToNext();
         }
         return pessoas;
+    }
+
+    public ListAdapter buscar(String[] busca)
+    {
+        String[] campos = {"ds_nome"};
+        int[] ids = {R.id.txtBusca};
+
+        SimpleCursorAdapter adp = null;
+        try
+        {
+            Cursor cursor = databaseUtil.getConexaoDataBase().query("tb_pessoa", new String[]{"id_pessoa", "ds_nome"},"ds_nome LIKE ?", busca, null, null, "ds_nome ASC", null);
+
+            adp = new SimpleCursorAdapter(context, R.layout.activity_listar_pessoas, cursor, campos, ids,0);
+        }
+       catch (Exception e)
+       {
+           Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+       }
+        return adp;
     }
 }
